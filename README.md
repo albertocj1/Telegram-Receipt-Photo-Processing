@@ -63,6 +63,3 @@ Google Drive Root/
 6. Create the sheet with this header row: `Submission Date | Merchant | Amount | Currency | Transaction Date | Category | Telegram User | Drive File Link`
 7. Activate the workflow and send a receipt photo to your bot to test
 
-## License
-
-MIT
