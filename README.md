@@ -6,6 +6,11 @@ An n8n workflow that turns a Telegram bot into a receipt inbox: send it a photo 
 
 Send a receipt photo to [@ReceiptsPro123Bot](https://t.me/ReceiptsPro123Bot) on Telegram to see it in action.
 
+## Live Examples
+
+- 📊 [View the Google Sheet](https://docs.google.com/spreadsheets/d/12gP70Cc37ZXwaux-vqbDg2Ym4784hYFQBNru30aZgeg/edit?usp=sharing)
+- 📁 [View the Drive folder](https://drive.google.com/drive/u/0/folders/1W9wSdmB7QOzi1VKiU-xEHHsTaFwzBhu7)
+
 ## What it does
 
 - **Accepts receipt photos sent via Telegram** to a bot, ignoring any non-photo messages
@@ -63,3 +68,6 @@ Google Drive Root/
 6. Create the sheet with this header row: `Submission Date | Merchant | Amount | Currency | Transaction Date | Category | Telegram User | Drive File Link`
 7. Activate the workflow and send a receipt photo to your bot to test
 
+## License
+
+MIT
