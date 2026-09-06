@@ -2,6 +2,8 @@
 
 An n8n workflow that turns a Telegram bot into a receipt inbox: send it a photo of a receipt, and it extracts the merchant, amount, currency, date, and category using Google Gemini, logs the data to a Google Sheet, archives the original photo to Google Drive organized by submission date, and replies with a confirmation summary.
 
+![Workflow overview](assets/workflow-overview.png)
+
 ## Try it live
 
 Send a receipt photo to [@ReceiptsPro123Bot](https://t.me/ReceiptsPro123Bot) on Telegram to see it in action.
