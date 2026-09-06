@@ -4,6 +4,10 @@ An n8n workflow that turns a Telegram bot into a receipt inbox: send it a photo 
 
 ![Workflow overview](workflow-overview.png)
 
+## Demo Video
+
+[Watch a walkthrough](https://drive.google.com/file/d/14qvdThDIGkt0EZc0hSdWMR4Z6lnOBLC9/view?usp=sharing)
+
 ## Try it live
 
 Send a receipt photo to [@ReceiptsPro123Bot](https://t.me/ReceiptsPro123Bot) on Telegram to see it in action.
