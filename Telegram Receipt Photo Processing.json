@@ -1,0 +1,623 @@
+{
+  "name": "Telegram Receipt Photo Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "={{ $('Extract Photo Info').item.json.chat_id }}",
+        "text": "=✅ Receipt processed!\nMerchant: {{ $('Parse Gemini Output').item.json.merchant_name || 'N/A' }}\nAmount: {{ $('Parse Gemini Output').item.json.currency || '' }} {{ $('Parse Gemini Output').item.json.total_amount || 'N/A' }}\nDate: {{ $('Parse Gemini Output').item.json.transaction_date || 'N/A' }}\nCategory: {{ $('Parse Gemini Output').item.json.category || 'N/A' }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        8992,
+        1728
+      ],
+      "id": "a361ccc7-ac84-4fce-8e13-384a5f62d615",
+      "name": "Send Confirmation",
+      "webhookId": "6f83bc85-d807-4f1f-8909-1883d0a4387f",
+      "credentials": {
+        "telegramApi": {
+          "id": "oEYYPMm58EFfLawu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "12gP70Cc37ZXwaux-vqbDg2Ym4784hYFQBNru30aZgeg",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12gP70Cc37ZXwaux-vqbDg2Ym4784hYFQBNru30aZgeg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Submission Date": "={{ $('Parse Gemini Output').item.json.folder_date }}",
+            "Merchant": "={{ $('Parse Gemini Output').item.json.merchant_name }}",
+            "Amount": "={{ $('Parse Gemini Output').item.json.total_amount }}",
+            "Currency": "={{ $('Parse Gemini Output').item.json.currency }}",
+            "Transaction Date": "={{ $('Parse Gemini Output').item.json.transaction_date }}",
+            "Category": "={{ $('Parse Gemini Output').item.json.category }}",
+            "Telegram User": "={{ $('Parse Gemini Output').item.json.from_username }}",
+            "Drive File Link": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Submission Date",
+              "displayName": "Submission Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Merchant",
+              "displayName": "Merchant",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Transaction Date",
+              "displayName": "Transaction Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram User",
+              "displayName": "Telegram User",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive File Link",
+              "displayName": "Drive File Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        8768,
+        1728
+      ],
+      "id": "549dd912-e3f3-41d6-ad68-33276558ab59",
+      "name": "Log to Google Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ZdYM1EY9iGiqcrGU",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ ($('Parse Gemini Output').item.json.merchant_name || 'Receipt') + '_' + $('Parse Gemini Output').item.json.folder_date + '_' + $('Parse Gemini Output').item.json.message_id + '.jpg' }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Merge Folder Info').item.json.id }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        8544,
+        1728
+      ],
+      "id": "61b50d85-01af-48b7-abc6-b5c729c97294",
+      "name": "Upload Receipt Photo",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "3akILczqrAsBx2q0",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        8336,
+        1728
+      ],
+      "id": "0e39847c-0a11-4ea2-a73e-7109b776719d",
+      "name": "Merge Folder Info"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Parse Gemini Output').item.json.folder_date }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1W9wSdmB7QOzi1VKiU-xEHHsTaFwzBhu7",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        8112,
+        1472
+      ],
+      "id": "b941bda0-e650-4a52-8703-0cb53de99732",
+      "name": "Create Date Folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "3akILczqrAsBx2q0",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "folder-exists",
+              "leftValue": "={{ $json.folderFound }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        7904,
+        1552
+      ],
+      "id": "d5bf1d3e-0a43-4ac8-85c8-d3dfb3068ab1",
+      "name": "Folder Exists?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Search returns 0 items when the folder doesn't exist yet.\n// Normalize to exactly 1 item so the IF node always has something to route,\n// instead of silently producing 0 items on both branches.\nconst items = $input.all();\n\nif (items.length === 0 || !items[0].json.id) {\n  return [{ json: { folderFound: false, id: null } }];\n}\n\nreturn [{ json: { folderFound: true, id: items[0].json.id } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7744,
+        1552
+      ],
+      "id": "2c3f62d8-52cc-4863-8a08-f54f9a99f0f3",
+      "name": "Normalize Search Result"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json.folder_date }}",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1W9wSdmB7QOzi1VKiU-xEHHsTaFwzBhu7",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        7584,
+        1552
+      ],
+      "id": "ebcbce46-418f-40df-9194-d94a1c530aef",
+      "name": "Search Date Folder",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "3akILczqrAsBx2q0",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const prev = $('Extract Photo Info').first().json;\nconst geminiJson = $input.first().json;\n// The Gemini analyze node consumes the binary for its API call but does not\n// forward it to its output, so pull the original photo binary directly from\n// the Download Photo node instead of from this node's own input.\nconst binary = $('Download Photo').first().binary;\n\nlet rawText = '';\ntry {\n  // n8n's Gemini node returns the candidate object directly\n  // (content.parts[0].text), not wrapped in a top-level \"candidates\" array\n  // like the raw Google API response would be. Check both shapes.\n  rawText = geminiJson.content?.parts?.[0]?.text\n    || geminiJson.candidates?.[0]?.content?.parts?.[0]?.text\n    || geminiJson.text\n    || JSON.stringify(geminiJson);\n} catch (e) {\n  rawText = JSON.stringify(geminiJson);\n}\n\nconst cleaned = rawText.replace(/```json|```/g, '').trim();\n\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = { merchant_name: null, total_amount: null, currency: null, transaction_date: null, category: null, parse_error: cleaned };\n}\n\nreturn [{\n  json: {\n    ...prev,\n    merchant_name: parsed.merchant_name,\n    total_amount: parsed.total_amount,\n    currency: parsed.currency,\n    transaction_date: parsed.transaction_date,\n    category: parsed.category\n  },\n  binary: binary\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7424,
+        1728
+      ],
+      "id": "ead3f0a2-b45d-4432-a528-6962942ee876",
+      "name": "Parse Gemini Output"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.7-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.7-flash"
+        },
+        "text": "You are a receipt-processing assistant. Look at this receipt image and extract the following fields as strict JSON only, with no markdown formatting, code fences, or extra commentary:\n{\n  \"merchant_name\": string,\n  \"total_amount\": number,\n  \"currency\": string (ISO code if visible, else your best guess),\n  \"transaction_date\": string in YYYY-MM-DD format (use the date printed on the receipt, not today's date),\n  \"category\": string (one of: Groceries, Dining, Transportation, Utilities, Shopping, Health, Entertainment, Other)\n}\nIf a field cannot be determined, use null for that field. Return ONLY the JSON object, nothing else.",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        7216,
+        1728
+      ],
+      "id": "b29d61c0-aa15-4ef1-903b-24688645cac5",
+      "name": "Analyze Receipt (Gemini)",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "U2t5GMfT3x1mmmLF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        6992,
+        1728
+      ],
+      "id": "1a67dd26-57a1-48ae-ad3f-9e80bd337f7e",
+      "name": "Download Photo",
+      "webhookId": "9c0b52b3-7340-4915-95a0-540195497c3c",
+      "credentials": {
+        "telegramApi": {
+          "id": "oEYYPMm58EFfLawu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const message = $input.first().json.message;\nconst photos = message.photo;\nconst largest = photos[photos.length - 1]; // Telegram returns sizes smallest-first\nconst submissionDate = new Date(message.date * 1000);\nconst folderDate = submissionDate.toISOString().split('T')[0]; // YYYY-MM-DD\n\nreturn [{\n  json: {\n    file_id: largest.file_id,\n    chat_id: message.chat.id,\n    from_username: message.from.username || message.from.first_name || 'unknown',\n    message_id: message.message_id,\n    submission_timestamp: message.date,\n    folder_date: folderDate\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6768,
+        1728
+      ],
+      "id": "a14f8c70-2cec-4c46-83e4-a500816fa4dd",
+      "name": "Extract Photo Info"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        6336,
+        1728
+      ],
+      "id": "b21411f0-066a-4ca2-82dd-0f697ed04eb4",
+      "name": "Telegram Trigger",
+      "webhookId": "receipt-telegram-webhook",
+      "credentials": {
+        "telegramApi": {
+          "id": "oEYYPMm58EFfLawu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Setup checklist\n1. Telegram Bot credential (BotFather token)\n2. Google Drive OAuth2 credential\n3. Google Sheets OAuth2 credential\n4. Google Gemini (PaLM) API credential\n5. Set ROOT_FOLDER_ID in both Drive nodes (the parent \"Receipts\" folder)\n6. Set your Spreadsheet + Sheet name in the Sheets node\n7. Create the sheet with header row: Submission Date | Merchant | Amount | Currency | Transaction Date | Category | Telegram User | Drive File Link | Drive File Name",
+        "height": 340,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6304,
+        1280
+      ],
+      "id": "70e969ee-5a99-4a99-a9cf-7478b7eaf552",
+      "name": "Setup Notes"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-photo",
+              "leftValue": "={{ ($json.message.photo || []).length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        6544,
+        1728
+      ],
+      "id": "5c4a09de-a5a5-43d6-a912-91156059b970",
+      "name": "Has Photo?"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Log to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Receipt Photo": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Folder Info": {
+      "main": [
+        [
+          {
+            "node": "Upload Receipt Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Date Folder": {
+      "main": [
+        [
+          {
+            "node": "Merge Folder Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Folder Exists?": {
+      "main": [
+        [
+          {
+            "node": "Merge Folder Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Date Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Date Folder": {
+      "main": [
+        [
+          {
+            "node": "Normalize Search Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Search Result": {
+      "main": [
+        [
+          {
+            "node": "Folder Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Gemini Output": {
+      "main": [
+        [
+          {
+            "node": "Merge Folder Info",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Search Date Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Receipt (Gemini)": {
+      "main": [
+        [
+          {
+            "node": "Parse Gemini Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Photo": {
+      "main": [
+        [
+          {
+            "node": "Analyze Receipt (Gemini)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Photo Info": {
+      "main": [
+        [
+          {
+            "node": "Download Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Has Photo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Photo?": {
+      "main": [
+        [
+          {
+            "node": "Extract Photo Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "26c6d74e-2c68-4d3b-a6aa-f380de2bac0e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "982133a88ce6d6cda1c49e664427962b74260ca32af2b85e7026c5ab94959c7e"
+  },
+  "nodeGroups": [],
+  "id": "2GAPiqKqFCL7rigl",
+  "tags": []
+}
